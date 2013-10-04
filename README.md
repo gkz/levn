@@ -1,4 +1,4 @@
-# levn
+# levn [![Build Status](https://travis-ci.org/gkz/levn.png)](https://travis-ci.org/gkz/levn)
 <a name="levn" />
 __Light ECMAScript (JavaScript) Value Notation__
 

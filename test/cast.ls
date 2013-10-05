@@ -17,48 +17,48 @@ q = (type, input, expected, options) ->
 suite 'cast' ->
   test 'Undefined' ->
     q 'Undefined', 'undefined', void
-    throws (-> q 'Undefined', 'null', void), /Value "null" does not type check against/
+    throws (-> q 'Undefined', 'null'), /Value "null" does not type check against/
 
   test 'Null' ->
     q 'Null', 'null', null
-    throws (-> q 'Null', 'undefined', null), /Value "undefined" does not type check against/
+    throws (-> q 'Null', 'undefined'), /Value "undefined" does not type check against/
 
   test 'NaN' ->
     q 'NaN', 'NaN', NaN
-    throws (-> q 'NaN', '1', NaN), /Value "1" does not type check against/
+    throws (-> q 'NaN', '1'), /Value "1" does not type check against/
 
   test 'Boolean' ->
     q 'Boolean', 'true', true
     q 'Boolean', 'false', false
-    throws (-> q 'Boolean', '0', false), /Value "0" does not type check against/
+    throws (-> q 'Boolean', '0'), /Value "0" does not type check against/
 
   test 'Number' ->
     q 'Number', '2', 2
     q 'Number', '-2', -2
     q 'Number', '2.1', 2.1
     q 'Number', '-2.1', -2.1
-    throws (-> q 'Number', 'NaN', -2.1), /Value "NaN" does not type check against/
+    throws (-> q 'Number', 'NaN'), /Value "NaN" does not type check against/
 
   test 'Int' ->
     q 'Int', '2', 2
     q 'Int', '-2', -2
     q 'Int', '2.1', 2
     q 'Int', '-2.1', -2
-    throws (-> q 'Int', 'NaN', -2), /Value "NaN" does not type check against/
+    throws (-> q 'Int', 'NaN'), /Value "NaN" does not type check against/
 
   test 'Float' ->
     q 'Float', '2', 2
     q 'Float', '-2', -2
     q 'Float', '2.1', 2.1
     q 'Float', '-2.1', -2.1
-    throws (-> q 'Float', 'NaN', -2.1), /Value "NaN" does not type check against/
+    throws (-> q 'Float', 'NaN'), /Value "NaN" does not type check against/
 
   test 'Date' ->
     q 'Date', '2011-11-11', new Date '2011-11-11'
     q 'Date', '#2011-11-11#', new Date '2011-11-11'
     q 'Date', '1320969600000', new Date '2011-11-11'
     q 'Date', '#1320969600000#', new Date '2011-11-11'
-    throws (-> q 'Date', '#2011-13#', new Date '2011-11-11'), /Value "#2011-13#" does not type check against/
+    throws (-> q 'Date', '#2011-13#'), /Value "#2011-13#" does not type check against/
 
   test 'RegExp' ->
     q 'RegExp', 'hi', /hi/
@@ -113,7 +113,7 @@ suite 'cast' ->
       q '[[Number]]', '[1 2] [3 4] [5 6]', [[1 2] [3 4] [5 6]]
 
     test 'nope' ->
-      throws (-> q '[Number]', '[hi, there]', [1 2 3]), /Value "hi" does not type check against/
+      throws (-> q '[Number]', '[hi, there]'), /Value "hi" does not type check against/
 
   suite 'tuple' ->
     test 'simple' ->
@@ -145,8 +145,9 @@ suite 'cast' ->
       q '(Number, Maybe String)' '2 undefined', [2]
 
     test 'nope' ->
-      throws (-> q '(Number, String)' '(hi, 2)', [2, 'hi']), /Value "hi" does not type check against/
-      throws (-> q '(Number, String)' '(2)', [2]), /does not type check/
+      throws (-> q '(Number, String)' '(hi, 2)'), /Value "hi" does not type check against/
+      throws (-> q '(Number, String)' '(2)'), /does not type check/
+      throws (-> q '(Number, Number)' '(1,2,3)'), /does not type check/
 
   suite 'fields' ->
     test 'basic' ->
@@ -177,9 +178,9 @@ suite 'cast' ->
       q 'RegExp{source: String}', '/[a-z]/g', /[a-z]/g
 
     test 'nope' ->
-      throws (-> q '{x: Number}', '{x: hi}', {x: 2}), /Value "hi" does not type check against/
-      throws (-> q '{x: Number}', '{x: 2, y: hi}', {x: 2, y: 'hi'}), /does not type check/
-      throws (-> q '{x: Number, y: String}', '{x: 2}', {x: 2}), /does not type check/
+      throws (-> q '{x: Number}', '{x: hi}'), /Value "hi" does not type check against/
+      throws (-> q '{x: Number}', '{x: 2, y: hi}'), /does not type check/
+      throws (-> q '{x: Number, y: String}', '{x: 2}'), /does not type check/
 
   suite 'wildcard' ->
     test 'undefined' ->
@@ -227,17 +228,17 @@ suite 'cast' ->
       q '*', '[1,2,3]', [1,2,3]
       q '*', '[1 2 3]', [1,2,3]
       q '*', '[]', []
-      throws (-> q '*', '1 2 3', [1,2,3]), /Unable to parse/
+      throws (-> q '*', '1 2 3'), /Unable to parse/
 
     test 'tuple' ->
       q '*', '(1,2)', [1,2]
-      throws (-> q '*', '1 2', [1,2]), /Unable to parse/
+      throws (-> q '*', '1 2'), /Unable to parse/
 
     test 'object' ->
       q '*', '{x: 2, y: hello}', {x: 2, y: 'hello'}
       q '*', '{x: 2, y: hello}', {x: 2, y: 'hello'}
       q '*', '{}', {}
-      throws (-> q '*', 'x: 2, y: hello', {x: 2, y: 'hello'}), /Unable to parse/
+      throws (-> q '*', 'x: 2, y: hello'), /Unable to parse/
 
   suite 'nested mixed' ->
     test 'array of tuples' ->
@@ -259,7 +260,7 @@ suite 'cast' ->
       q 'Date | String', '2011-11-11', '2011-11-11', {+explicit}
 
       q 'RegExp', 're', /re/, {-explicit}
-      throws (-> q 'RegExp', 're', /re/, {+explicit}), /Value "re" does not type check/
+      throws (-> q 'RegExp', 're', null, {+explicit}), /Value "re" does not type check/
 
     test 'custom-types' ->
       !function Person name, age
@@ -280,9 +281,9 @@ suite 'cast' ->
               age = types-cast value.age, [type: 'Number'], options
               {type: 'Just', value: new Person name, age}
       q 'Even', '2', 2, options
-      throws (-> q 'Even', '3', 3, options), /Value "3" does not type check/
+      throws (-> q 'Even', '3', null, options), /Value "3" does not type check/
 
       q 'Person', '{name: Arnold, age: 25}', (new Person 'Arnold', 25), options
 
-      throws (-> q 'FAKE', '3', 3, options), /Type not defined: FAKE/
-      throws (-> q 'FAKE', '3', 3), /Type not defined: FAKE/
+      throws (-> q 'FAKE', '3', , options), /Type not defined: FAKE/
+      throws (-> q 'FAKE', '3'), /Type not defined: FAKE/

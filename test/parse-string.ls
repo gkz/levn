@@ -15,6 +15,9 @@ suite 'parse-string' ->
     q "'string'", 'String', "'string'"
     q "'string'", '*', "'string'"
     q '"string with spaces and: {[(})]"', 'String', '"string with spaces and: {[(})]"'
+    q 'string with spaces and: {[(})]', 'String', 'string with spaces and: {[(})]'
+    throws (-> q 'string with spaces and: {[(})]', '*'), /Unable to parse/
+    throws (-> q 'string with spaces and: {[(})]', 'String', , {+explicit}), /Unable to parse/
 
   test '#date#' ->
     q '#2011-11-11#', 'Date', '#2011-11-11#'
@@ -47,7 +50,7 @@ suite 'parse-string' ->
 
     q '1,2,3', '[Number]', ['1','2','3']
     q '1,2,3', 'Array', ['1','2','3']
-    throws (-> q '1,2,3', '*', ['1','2','3']), /Unable to parse/
+    throws (-> q '1,2,3', '*'), /Unable to parse/
 
     q '1, 2, 3', '[Number]', ['1','2','3']
     q '1, 2, 3', 'Array', ['1','2','3']
@@ -75,7 +78,7 @@ suite 'parse-string' ->
     q '1, 2', '(Number, Number)', ['1', '2']
     q '1 2', '(Number, Number)', ['1', '2']
 
-    throws (-> q '1,2', '*', ['1', '2']), /Unable to parse/
+    throws (-> q '1,2', '*'), /Unable to parse/
 
     q '(1 2) (3 4)', '((Number,Number),(Number,Number))', [['1','2'],['3','4']]
 
@@ -94,12 +97,12 @@ suite 'parse-string' ->
     q '{x: 2 y: 3}', '{x: Number, y: Number}', {x: '2', y: '3'}
     q '{x: 2 y: 3}', '*', {x: '2', y: '3'}
 
-    throws (-> q '{x}', '*', {x: '2', y: '3'}), /Expected ':', but got '}' instead/
+    throws (-> q '{x}', '*'), /Expected ':', but got '}' instead/
 
     q 'x: 2, y: 3', 'Object', {x: '2', y: '3'}
     q 'x: 2, y: 3', '{x: Number, y: Number}', {x: '2', y: '3'}
 
-    throws (-> q 'x: 2, y: 3', '*', {x: '2', y: '3'}), /Unable to parse/
+    throws (-> q 'x: 2, y: 3', '*'), /Unable to parse/
 
     q 'x: 2 y: 3', 'Object', {x: '2', y: '3'}
     q 'x: 2 y: 3', '{x: Number, y: Number}', {x: '2', y: '3'}
@@ -109,8 +112,8 @@ suite 'parse-string' ->
     q '&$-1234asdfasw#!.+=%', '*', '&$-1234asdfasw#!.+=%'
 
   test 'explicit' ->
-    throws (-> q '1 2 3', '*', [1,2,3]), /Unable to parse/
-    throws (-> q '1 2 3', 'Array', [1,2,3], {+explicit}), /Unable to parse/
+    throws (-> q '1 2 3', '*', , {+explicit}), /Unable to parse/
+    throws (-> q '1 2 3', 'Array', , {+explicit}), /Unable to parse/
 
   test 'nothing' ->
-    throws (-> q '', '*', {}), /Error parsing ''/
+    throws (-> q '', '*'), /Error parsing ''/

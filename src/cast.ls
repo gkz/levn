@@ -63,10 +63,15 @@ function cast-array node, type, options
 function cast-tuple node, type, options
   return {type: 'Nothing'} unless typeof! node is 'Array'
   result = []
-  for types, i in type.of
+  i = 0
+  for types in type.of
     cast = types-cast node[i], types, options
     result.push cast if typeof! cast isnt 'Undefined'
-  type: 'Just', value: result
+    i++
+  if node.length <= i
+    type: 'Just', value: result
+  else
+    type: 'Nothing'
 
 function cast-fields node, type, options
   return {type: 'Nothing'} unless typeof! node is 'Object'

@@ -68,21 +68,22 @@ suite 'cast' ->
 
   test 'Array' ->
     q 'Array', '[1,2,3]', [1,2,3]
-    q 'Array', '[1 2 3]', [1,2,3]
+    q 'Array', '1,2,3', [1,2,3]
     q 'Array', '[]', []
 
   test 'Object' ->
     q 'Object', '{x: 2, y: hello}', {x: 2, y: 'hello'}
-    q 'Object', '{x: 2, y: hello}', {x: 2, y: 'hello'}
+    q 'Object', 'x: 2, y: hello', {x: 2, y: 'hello'}
     q 'Object', '{}', {}
 
   test 'String' ->
     q 'String', '2', '2'
+    q 'String', 'one two three', 'one two three'
     q 'String', '"[2]"', '[2]'
     q 'String', '"{2: [], ()}"', '{2: [], ()}'
 
   test 'String using quotes' ->
-    q 'String', "'hello there man'", 'hello there man'
+    q 'String', "'one[two]three'", 'one[two]three'
 
   test 'multiple' ->
     q 'Number | String', '2', 2
@@ -98,19 +99,15 @@ suite 'cast' ->
     test 'no delimiters' ->
       q '[Number]', '1, 2, 3', [1 2 3]
 
-    test 'no commas' ->
-      q '[Number]', '[1 2 3]', [1 2 3]
-
-    test 'no delimiters or commas' ->
-      q '[Number]', '1 2 3', [1 2 3]
+    test 'trailing comma' ->
+      q '[Number]', '[1, 2, 3,]', [1 2 3]
 
     test 'empty' ->
       q '[Number]', '[]', []
 
     test 'nested' ->
       q '[[Number]]', '[[1, 2],[3,4],[5,6]]', [[1 2] [3 4] [5 6]]
-      q '[[Number]]', '[[1 2] [3 4] [5 6]]', [[1 2] [3 4] [5 6]]
-      q '[[Number]]', '[1 2] [3 4] [5 6]', [[1 2] [3 4] [5 6]]
+      q '[[Number]]', '[1,2],[3,4],[5,6]', [[1 2] [3 4] [5 6]]
 
     test 'nope' ->
       throws (-> q '[Number]', '[hi, there]'), /Value "hi" does not type check against/
@@ -124,14 +121,11 @@ suite 'cast' ->
     test 'no delimiters' ->
       q '(Number, String)' '2, hi', [2 'hi']
 
-    test 'no commas' ->
-      q '(Number, String)' '(2 hi)', [2 'hi']
-
-    test 'no delimiters or commas' ->
-      q '(Number, String)' '2 hi', [2 'hi']
+    test 'trailing comma' ->
+      q '(Number, String)' '(2, hi,)', [2, 'hi']
 
     test 'nested' ->
-      q '((Boolean, String), Number)' '(true hi) 2', [[true, 'hi'], 2]
+      q '((Boolean, String), Number)' '(true, hi), 2', [[true, 'hi'], 2]
 
     test 'attempt to cast non-array' ->
       q '(Number, String) | Number' '(2, hi)', [2, 'hi']
@@ -142,7 +136,7 @@ suite 'cast' ->
       q '(Number, Maybe String)' '2', [2]
 
       q '(Number, Maybe String)' '(2, undefined)', [2]
-      q '(Number, Maybe String)' '2 undefined', [2]
+      q '(Number, Maybe String)' '2,undefined', [2]
 
     test 'nope' ->
       throws (-> q '(Number, String)' '(hi, 2)'), /Value "hi" does not type check against/
@@ -156,14 +150,11 @@ suite 'cast' ->
     test 'no delimiters' ->
       q '{x: Number}', 'x: 2', {x: 2}
 
+    test 'trailing comma' ->
+      q '{x: Number}', '{x: 2,}', {x: 2}
+
     test 'multiple keys' ->
       q '{x: Number, y: String}', '{x: 2, y: yo}', {x: 2, y: 'yo'}
-
-    test 'no commas' ->
-      q '{x: Number, y: String}', '{x: 2 y: yo}', {x: 2, y: 'yo'}
-
-    test 'no delimiters or commas' ->
-      q '{x: Number, y: String}', 'x: 2 y: yo', {x: 2, y: 'yo'}
 
     test 'nested' ->
       q '{obj: {z: String}, x: {y: Boolean}}', 'obj: {z: hi}, x: {y: true}', {obj: {z:'hi'},x:{+y}}
@@ -226,33 +217,26 @@ suite 'cast' ->
 
     test 'array' ->
       q '*', '[1,2,3]', [1,2,3]
-      q '*', '[1 2 3]', [1,2,3]
       q '*', '[]', []
-      throws (-> q '*', '1 2 3'), /Unable to parse/
 
     test 'tuple' ->
       q '*', '(1,2)', [1,2]
-      throws (-> q '*', '1 2'), /Unable to parse/
 
     test 'object' ->
-      q '*', '{x: 2, y: hello}', {x: 2, y: 'hello'}
       q '*', '{x: 2, y: hello}', {x: 2, y: 'hello'}
       q '*', '{}', {}
       throws (-> q '*', 'x: 2, y: hello'), /Unable to parse/
 
   suite 'nested mixed' ->
     test 'array of tuples' ->
-      q '[(Number, String)]', '[(1, hi),(3 "hello there"),(5,yo)]',
-          [[1 'hi'], [3 'hello there'] [5 'yo']]
-      q '[(Number, String)]', '(1 hi) (3 "hello there") (5 yo)',
+      q '[(Number, String)]', '[(1, hi),(3,"hello there"),(5,yo)]',
           [[1 'hi'], [3 'hello there'] [5 'yo']]
 
     test 'array of objects' ->
       q '[{x: Number}]', '[{x: 2}, {x: 3}]', [{x: 2}, {x: 3}]
-      q '[{x: Number}]', '{x: 2} {x: 3}', [{x: 2}, {x: 3}]
 
     test 'wildcard' ->
-      q '*', '[hi (null [42]) {k: true}]', ['hi', [null, [42]], {k: true}]
+      q '*', '[hi,(null,[42]),{k: true}]', ['hi', [null, [42]], {k: true}]
 
   suite 'options' ->
     test 'explicit' ->

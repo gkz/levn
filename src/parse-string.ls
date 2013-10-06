@@ -9,13 +9,13 @@ function consume-op tokens, op
 function maybe-consume-op tokens, op
   tokens.shift! if tokens.0 is op
 
-function consume-list tokens, delimiters, has-delimiters
-  consume-op tokens, delimiters.0 if has-delimiters
+function consume-list tokens, [open, close], has-delimiters
+  consume-op tokens, open if has-delimiters
   result = []
-  while tokens.length and tokens.0 isnt delimiters.1
+  while tokens.length and tokens.0 isnt close
     result.push consume-element tokens
     maybe-consume-op tokens, ','
-  consume-op tokens, delimiters.1 if has-delimiters
+  consume-op tokens, close if has-delimiters
   result
 
 function consume-array tokens, has-delimiters
@@ -78,7 +78,7 @@ token-regex = //
   | (#.*#)                   # # date #
   | (/(?:\\/|[^/])*/[gimy]*) # /reg-exp/flags
   | ([#special])             # special
-  | ([^\s#special]+)         # everything else
+  | ([^\s#special](?:\s*[^\s#special]+)*) # everything else
   | \s*
 //
 

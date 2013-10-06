@@ -35,6 +35,7 @@ suite 'parse-string' ->
     q '[1,2,3]', 'Array', ['1','2','3']
     q '[1,2,3]', '[Number]', ['1','2','3']
     q '[1,2,3]', '*', ['1','2','3']
+    q '[one two , three four]', '[String]', ['one two','three four']
 
     q '[1,2,3,]', '*', ['1','2','3']
     q '[1, 2, 3, ]', '*', ['1','2','3']
@@ -44,10 +45,6 @@ suite 'parse-string' ->
     q '[]', '[Number]', []
     q '[]', '*', []
 
-    q '[1 2 3]', '[Number]', ['1','2','3']
-    q '[1 2 3]', 'Array', ['1','2','3']
-    q '[1 2 3]', '*', ['1','2','3']
-
     q '1,2,3', '[Number]', ['1','2','3']
     q '1,2,3', 'Array', ['1','2','3']
     throws (-> q '1,2,3', '*'), /Unable to parse/
@@ -55,14 +52,11 @@ suite 'parse-string' ->
     q '1, 2, 3', '[Number]', ['1','2','3']
     q '1, 2, 3', 'Array', ['1','2','3']
 
-    q '1 2 3', '[Number]', ['1','2','3']
-    q '1 2 3', 'Array', ['1','2','3']
-
     q '', '[Number]', []
     q '', 'Array', []
 
-    q '[1 2] [3 4]', 'Array', [['1','2'],['3','4']]
-    q '[1 2] [3 4]', '[[Number]]', [['1','2'],['3','4']]
+    q '[1,2],[3,4]', 'Array', [['1','2'],['3','4']]
+    q '[1,2],[3,4]', '[[Number]]', [['1','2'],['3','4']]
 
   test '(tuple)' ->
     q '(1,2)', '(Number, Number)', ['1', '2']
@@ -71,16 +65,15 @@ suite 'parse-string' ->
     q '(1, 2)', '(Number, Number)', ['1', '2']
     q '(1, 2)', '*', ['1', '2']
 
-    q '(1 2)', '(Number, Number)', ['1', '2']
-    q '(1 2)', '*', ['1', '2']
+    q '(one two , 2)', '(String, Number)', ['one two', '2']
 
     q '1,2', '(Number, Number)', ['1', '2']
     q '1, 2', '(Number, Number)', ['1', '2']
-    q '1 2', '(Number, Number)', ['1', '2']
 
     throws (-> q '1,2', '*'), /Unable to parse/
+    throws (-> q '1,2', '*'), /Unable to parse/
 
-    q '(1 2) (3 4)', '((Number,Number),(Number,Number))', [['1','2'],['3','4']]
+    q '(1,2),(3,4)', '((Number,Number),(Number,Number))', [['1','2'],['3','4']]
 
   test '{object}' ->
     q '{x: 2, y: 3}', 'Object', {x: '2', y: '3'}
@@ -93,10 +86,6 @@ suite 'parse-string' ->
     q '', '{...}', {}
     q '', '{x: Number, y: Number}', {}
 
-    q '{x: 2 y: 3}', 'Object', {x: '2', y: '3'}
-    q '{x: 2 y: 3}', '{x: Number, y: Number}', {x: '2', y: '3'}
-    q '{x: 2 y: 3}', '*', {x: '2', y: '3'}
-
     throws (-> q '{x}', '*'), /Expected ':', but got '}' instead/
 
     q 'x: 2, y: 3', 'Object', {x: '2', y: '3'}
@@ -104,16 +93,14 @@ suite 'parse-string' ->
 
     throws (-> q 'x: 2, y: 3', '*'), /Unable to parse/
 
-    q 'x: 2 y: 3', 'Object', {x: '2', y: '3'}
-    q 'x: 2 y: 3', '{x: Number, y: Number}', {x: '2', y: '3'}
-
   test 'etc' ->
     q 'hi', '*', 'hi'
+    q 'this is a string', '*', 'this is a string'
     q '&$-1234asdfasw#!.+=%', '*', '&$-1234asdfasw#!.+=%'
 
   test 'explicit' ->
-    throws (-> q '1 2 3', '*', , {+explicit}), /Unable to parse/
-    throws (-> q '1 2 3', 'Array', , {+explicit}), /Unable to parse/
+    throws (-> q '1,2,3', '*', , {+explicit}), /Unable to parse/
+    throws (-> q '1,2,3', 'Array', , {+explicit}), /Unable to parse/
 
   test 'nothing' ->
     throws (-> q '', '*'), /Error parsing ''/

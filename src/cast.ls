@@ -49,9 +49,9 @@ types =
   String: ->
     return type: 'Nothing' unless typeof! it is 'String'
     if it.match /^'(.*)'$/
-      type: 'Just', value: that.1
+      type: 'Just', value: that.1.replace "\\'", "'"
     else if it.match /^"(.*)"$/
-      type: 'Just', value: that.1
+      type: 'Just', value: that.1.replace '\\"', '"'
     else
       type: 'Just', value: it
 

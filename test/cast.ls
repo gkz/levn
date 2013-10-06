@@ -63,6 +63,7 @@ suite 'cast' ->
   test 'RegExp' ->
     q 'RegExp', 'hi', /hi/
     q 'RegExp', '/hi/', /hi/
+    q 'RegExp', '/h\\/i/', /h\/i/
     q 'RegExp', '/hi/ig', /hi/ig
     q 'RegExp', '/^(hi)|[a-zA-Z]*:there$/g', /^(hi)|[a-zA-Z]*:there$/g
 
@@ -79,6 +80,7 @@ suite 'cast' ->
   test 'String' ->
     q 'String', '2', '2'
     q 'String', 'one two three', 'one two three'
+    q 'String', '"before\\"after"', 'before"after'
     q 'String', '"[2]"', '[2]'
     q 'String', '"{2: [], ()}"', '{2: [], ()}'
 

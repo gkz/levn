@@ -11,6 +11,7 @@ q = (input, type, expected, options) ->
 suite 'parse-string' ->
   test '"string"' ->
     q '"string"', 'String', '"string"'
+    q '"one\\"two"', 'String', '"one\\"two"'
     q '"string"', '*', '"string"'
     q "'string'", 'String', "'string'"
     q "'string'", '*', "'string'"
@@ -27,6 +28,7 @@ suite 'parse-string' ->
 
   test '/regexp/flags' ->
     q '/regexp/ig', 'RegExp', '/regexp/ig'
+    q '/reg\\/exp/ig', 'RegExp', '/reg\\/exp/ig'
     q '/regexp/ig', '*', '/regexp/ig'
     q '/[ ] {:}/ig', 'RegExp', '/[ ] {:}/ig'
     q '/[ ] {:}/ig', '*', '/[ ] {:}/ig'

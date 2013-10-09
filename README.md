@@ -20,7 +20,7 @@ var parse = require('levn').parse;
 parse('Number', '2');      // 2
 parse('String', '2');      // '2'
 parse('String', 'levn');   // 'levn'
-parse('String', '"a b"');  // 'a b'
+parse('String', 'a b');    // 'a b'
 parse('Boolean', 'true');  // true
 
 parse('Date', '#2011-11-11#'); // (Date object)
@@ -40,11 +40,8 @@ parse('[Number]', '1,2,3');                      // [1,2,3]
 parse('(String, Boolean)', 'hi, false');         // ['hi', false]
 parse('{a: String, b: Number}', 'a: str, b: 2'); // {a: 'str', b: 2}
 
-// commas are always optional
-parse('[Number]', '1 2 3');   // [1,2,3]
-
 // wildcard - auto choose type
-parse('*', '[hi (null [42]) {k: true}]'); // ['hi', [null, [42]], {k: true}]
+parse('*', '[hi,(null,[42]),{k: true}]'); // ['hi', [null, [42]], {k: true}]
 ```
 ## Usage
 
@@ -104,22 +101,23 @@ If you do not provide type information, and simply use `*`, levn will parse the 
 * `#date#` is parsed as a Date, eg. `#2011-11-11#` is `new Date('2011-11-11')`
 * `/regexp/flags` is parsed as a RegExp, eg. `/re/gi` is `/re/gi`
 * `undefined`, `null`, `NaN`, `true`, and `false` are all their JavaScript equivalents
-* `[element1, element2, etc]` is an Array, and the casting procedure is recursively applied to each element. Eg. `[1,2,3]` is `[1,2,3]`. Commas are always optional.
-* `(element1, element2, etc)` is an tuple, and the casting procedure is recursively applied to each element. Eg. `(1, a)` is `(1, a)` (is `[1, 'a']`. Commas are always optional.
-* `{key1: val1, key2: val2, ...}` is an Object, and the casting procedure is recursively applied to each property. Eg. `{a: 1, b: 2}` is `{a: 1, b: 2}`. Commas are always optional.
-* Any test which does not fall under the above, and which does not contain spaces or other special characters (`[``]``(``)``{``}``:``,`) is a string, eg. `$12-blah` is `"$12-blah"`.
+* `[element1, element2, etc]` is an Array, and the casting procedure is recursively applied to each element. Eg. `[1,2,3]` is `[1,2,3]`.
+* `(element1, element2, etc)` is an tuple, and the casting procedure is recursively applied to each element. Eg. `(1, a)` is `(1, a)` (is `[1, 'a']`).
+* `{key1: val1, key2: val2, ...}` is an Object, and the casting procedure is recursively applied to each property. Eg. `{a: 1, b: 2}` is `{a: 1, b: 2}`.
+* Any test which does not fall under the above, and which does not contain special characters (`[``]``(``)``{``}``:``,`) is a string, eg. `$12- blah` is `"$12- blah"`.
 
 If you do provide type information, you can make your input more concise as the program already has some information about what it expects. Please see the [type format](https://github.com/gkz/type-check#type-format) section of [type-check](https://github.com/gkz/type-check) for more information about how to specify types. There are some rules about what levn can do with the information:
 
+* If a String is expected, and only a String, all characters of the input (including any special ones) will become part of the output. Eg. `[({})]` is `"[({})]"`.
 * If a Date is expected, the surrounding `#` can be omitted from date literals. Eg. `2011-11-11` is `new Date('2011-11-11')`
 * If a RegExp is expected, no flags need to be specified, and the regex is not using any of the special characters,the opening and closing `/` can be omitted - this will have the affect of setting the source of the regex to the input. Eg. `regex` is `/regex/`
-* If an Array is expected, and it is the root node (at the top level), the opening `[` and closing `]` can be omitted. Eg. `1,2,3` is `[1,2,3]` - also remember that commas are optional so `1 2 3` is `[1,2,3]`.
-* If a tuple is expected, and it is the root node (at the top level), the opening `(` and closing `)` can be omitted. Eg. `1, a` is `(1, a)` (is `[1, 'a']`) - also remember that commas are optional so `1 a` is `(1, a)`.
-* If an Object is expected, and it is the root node (at the top level), the opening `{` and closing `}` can be omitted. Eg `a: 1, b: 2` is `{a: 1, b: 2}`. Commas can be omitted but would you really want to?
+* If an Array is expected, and it is the root node (at the top level), the opening `[` and closing `]` can be omitted. Eg. `1,2,3` is `[1,2,3]`.
+* If a tuple is expected, and it is the root node (at the top level), the opening `(` and closing `)` can be omitted. Eg. `1, a` is `(1, a)` (is `[1, 'a']`).
+* If an Object is expected, and it is the root node (at the top level), the opening `{` and closing `}` can be omitted. Eg `a: 1, b: 2` is `{a: 1, b: 2}`.
 
 If you list multiple types (eg. `Number | String`), it will first attempt to cast to the first type and then validate - if the validation fails it will move on to the next type and so forth, left to right. You must be careful as some types will succeed with any input, such as String. Thus put String at the end of your list. In non-explicit mode, Date and RegExp will succeed with a large variety of input - also be careful with these and list them near the end if not last in your list.
 
-Note that whitespace is inconsequential in all cases other than separating elements.
+Whitespace between special characters and elements is inconsequential.
 
 ## Options
 

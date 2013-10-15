@@ -194,4 +194,4 @@ parse('Person', '{name: Laura, age: 25}', options); // Person {name: 'Laura', ag
 
 ## Technical About
 
-`levn` is written in [LiveScript](http://livescript.net/) - a langauge that compiles to JavaScript. It uses [type-check](https://github.com/gkz/type-check) to both parse types and validate values. It also uses the [prelude.ls](http://preludels.com/) library.
+`levn` is written in [LiveScript](http://livescript.net/) - a language that compiles to JavaScript. It uses [type-check](https://github.com/gkz/type-check) to both parse types and validate values. It also uses the [prelude.ls](http://preludels.com/) library.

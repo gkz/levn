@@ -1,5 +1,5 @@
 name: 'levn'
-version: '0.1.0'
+version: '0.2.0'
 
 author: 'George Zahariev <z@georgezahariev.com>'
 description: 'Light ECMAScript (JavaScript) Value Notation - human written, concise, typed, flexible'
@@ -37,7 +37,7 @@ scripts:
 
 dependencies:
   'prelude-ls': '~1.0.3'
-  'type-check': '~0.2.0'
+  'type-check': '~0.3.0'
 
 dev-dependencies:
   LiveScript: '~1.2.0'

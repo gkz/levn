@@ -80,12 +80,14 @@ suite 'cast' ->
   test 'String' ->
     q 'String', '2', '2'
     q 'String', 'one two three', 'one two three'
-    q 'String', '"before\\"after"', 'before"after'
-    q 'String', '"[2]"', '[2]'
-    q 'String', '"{2: [], ()}"', '{2: [], ()}'
+    q 'String', '[2]', '[2]'
+    q 'String', '{2: [], ()}', '{2: [], ()}'
 
   test 'String using quotes' ->
-    q 'String', "'one[two]three'", 'one[two]three'
+    q 'String', "'one[two]three'", '\'one[two]three\''
+    q 'String', '"before"after"', '"before"after"'
+    q 'String', '"hi"', '"hi"'
+    q 'String', '"h\n\ni"', '"h\n\ni"'
 
   test 'multiple' ->
     q 'Number | String', '2', 2

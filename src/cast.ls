@@ -31,14 +31,14 @@ types =
   Int: -> type: 'Just', value: parse-int it
   Float: -> type: 'Just', value: parse-float it
   Date: (value, options) ->
-    if /^\#(.*)\#$/.exec value
+    if /^\#([\s\S]*)\#$/.exec value
       type: 'Just', value: new Date (+that.1 or that.1)
     else if options.explicit
       type: 'Nothing'
     else
       type: 'Just', value: new Date (+value or value)
   RegExp: (value, options) ->
-    if /^\/(.*)\/([gimy]*)$/.exec value
+    if /^\/([\s\S]*)\/([gimy]*)$/.exec value
       type: 'Just', value: new RegExp that.1, that.2
     else if options.explicit
       type: 'Nothing'
@@ -48,9 +48,9 @@ types =
   Object: (value, options) -> cast-fields value, {of: {}}, options
   String: ->
     return type: 'Nothing' unless typeof! it is 'String'
-    if it.match /^'(.*)'$/
+    if it.match /^'([\s\S]*)'$/
       type: 'Just', value: that.1.replace "\\'", "'"
-    else if it.match /^"(.*)"$/
+    else if it.match /^"([\s\S]*)"$/
       type: 'Just', value: that.1.replace '\\"', '"'
     else
       type: 'Just', value: it

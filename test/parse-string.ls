@@ -10,13 +10,13 @@ q = (input, type, expected, options) ->
 
 suite 'parse-string' ->
   test '"string"' ->
-    q '"string"', 'String', '"string"'
-    q '"one\\"two"', 'String', '"one\\"two"'
+    q 'string', 'String', '\'string\''
+    q '"string"', 'String', '\'"string"\''
+    q 'one\\"two', 'String', '\'one\\"two\''
     q '"string"', '*', '"string"'
-    q "'string'", 'String', "'string'"
-    q "'string'", '*', "'string'"
-    q '"string with spaces and: {[(})]"', 'String', '"string with spaces and: {[(})]"'
-    q 'string with spaces and: {[(})]', 'String', 'string with spaces and: {[(})]'
+    q "string", 'String', '\'string\''
+    q "'string'", '*', '\'string\''
+    q 'string with spaces and: {[(})]', 'String', '\'string with spaces and: {[(})]\''
     throws (-> q 'string with spaces and: {[(})]', '*'), /Unable to parse/
     throws (-> q 'string with spaces and: {[(})]', 'String', , {+explicit}), /Unable to parse/
 

@@ -108,9 +108,9 @@ If you do not provide type information, and simply use `*`, levn will parse the 
 
 If you do provide type information, you can make your input more concise as the program already has some information about what it expects. Please see the [type format](https://github.com/gkz/type-check#type-format) section of [type-check](https://github.com/gkz/type-check) for more information about how to specify types. There are some rules about what levn can do with the information:
 
-* If a String is expected, and only a String, all characters of the input (including any special ones) will become part of the output. Eg. `[({})]` is `"[({})]"`.
-* If a Date is expected, the surrounding `#` can be omitted from date literals. Eg. `2011-11-11` is `new Date('2011-11-11')`
-* If a RegExp is expected, no flags need to be specified, and the regex is not using any of the special characters,the opening and closing `/` can be omitted - this will have the affect of setting the source of the regex to the input. Eg. `regex` is `/regex/`
+* If a String is expected, and only a String, all characters of the input (including any special ones) will become part of the output. Eg. `[({})]` is `"[({})]"`, and `"hi"` is `'"hi"'`.
+* If a Date is expected, the surrounding `#` can be omitted from date literals. Eg. `2011-11-11` is `new Date('2011-11-11')`.
+* If a RegExp is expected, no flags need to be specified, and the regex is not using any of the special characters,the opening and closing `/` can be omitted - this will have the affect of setting the source of the regex to the input. Eg. `regex` is `/regex/`.
 * If an Array is expected, and it is the root node (at the top level), the opening `[` and closing `]` can be omitted. Eg. `1,2,3` is `[1,2,3]`.
 * If a tuple is expected, and it is the root node (at the top level), the opening `(` and closing `)` can be omitted. Eg. `1, a` is `(1, a)` (is `[1, 'a']`).
 * If an Object is expected, and it is the root node (at the top level), the opening `{` and closing `}` can be omitted. Eg `a: 1, b: 2` is `{a: 1, b: 2}`.

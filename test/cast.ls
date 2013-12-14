@@ -80,6 +80,8 @@ suite 'cast' ->
   test 'String' ->
     q 'String', '2', '2'
     q 'String', 'one two three', 'one two three'
+    q 'String', 'blah "hi \\" there:"', 'blah "hi \\" there:"'
+    q 'String', "blah 'hi \\' there:'", "blah 'hi \\' there:'"
     q 'String', '[2]', '[2]'
     q 'String', '{2: [], ()}', '{2: [], ()}'
 

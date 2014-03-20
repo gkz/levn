@@ -2,7 +2,7 @@ parse-string = require './parse-string'
 cast = require './cast'
 {parse-type} = require 'type-check'
 
-VERSION = '0.1.0'
+VERSION = '0.2.1'
 
 parsed-type-parse = (parsed-type, string, options = {}) ->
   options.explicit ?= false

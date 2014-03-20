@@ -1,5 +1,5 @@
 name: 'levn'
-version: '0.2.2'
+version: '0.2.3'
 
 author: 'George Zahariev <z@georgezahariev.com>'
 description: 'Light ECMAScript (JavaScript) Value Notation - human written, concise, typed, flexible'

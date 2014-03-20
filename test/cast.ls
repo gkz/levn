@@ -70,6 +70,7 @@ suite 'cast' ->
   test 'Array' ->
     q 'Array', '[1,2,3]', [1,2,3]
     q 'Array', '1,2,3', [1,2,3]
+    q 'Array', '"hi"', ["hi"]
     q 'Array', '[]', []
 
   test 'Object' ->
@@ -203,6 +204,9 @@ suite 'cast' ->
     test 'string' ->
       q '*', 'hi', 'hi'
       q '*', '2011-11-11', '2011-11-11'
+      q '*', '"\'"', "'"
+      q '*', '"\\""', '"'
+      q '*', '"\\"\\""', '""'
 
     test 'quoted string' ->
       q '*', '"hello there"', 'hello there'
@@ -219,6 +223,7 @@ suite 'cast' ->
     test 'regex' ->
       q '*', '/hi/', /hi/
       q '*', '/hi/ig', /hi/ig
+      q '*', '/\\//', /\//
       q '*', '/^(hi) |[a-zA-Z]*:there$/g', /^(hi) |[a-zA-Z]*:there$/g
 
     test 'array' ->

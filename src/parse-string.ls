@@ -73,11 +73,11 @@ function consume-top-level tokens, types, options
 
 special = /\[\]\(\)}{:,/.source
 token-regex = //
-    ("(?:[^"]|\\")*")        # "string"
-  | ('(?:[^']|\\')*')        # 'string'
-  | (#.*#)                   # # date #
-  | (/(?:\\/|[^/])*/[gimy]*) # /reg-exp/flags
-  | ([#special])             # special
+    ("(?:\\"|[^"])*")          # "string"
+  | ('(?:\\'|[^'])*')          # 'string'
+  | (/(?:\\/|[^/])*/[a-zA-Z]*) # /reg-exp/flags
+  | (#.*#)                     # # date #
+  | ([#special])               # special
   | ([^\s#special](?:\s*[^\s#special]+)*) # everything else
   | \s*
 //

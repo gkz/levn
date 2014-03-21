@@ -1,5 +1,5 @@
 levn = require '..'
-{equal} = require 'assert'
+{strict-equal: equal} = require 'assert'
 
 suite 'index' ->
   test 'version' ->

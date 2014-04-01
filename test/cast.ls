@@ -106,6 +106,9 @@ suite 'cast' ->
     test 'no delimiters' ->
       q '[Number]', '1, 2, 3', [1 2 3]
 
+    test 'space after comma with string content' ->
+      q '[String]', 'node, browser', ['node', 'browser']
+
     test 'trailing comma' ->
       q '[Number]', '[1, 2, 3,]', [1 2 3]
 

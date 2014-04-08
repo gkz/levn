@@ -239,7 +239,6 @@ suite 'cast' ->
     test 'object' ->
       q '*', '{x: 2, y: hello}', {x: 2, y: 'hello'}
       q '*', '{}', {}
-      throws (-> q '*', 'x: 2, y: hello'), /Unable to parse/
 
   suite 'nested mixed' ->
     test 'array of tuples' ->

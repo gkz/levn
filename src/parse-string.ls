@@ -12,8 +12,9 @@ function maybe-consume-op tokens, op
 function consume-list tokens, [open, close], has-delimiters
   consume-op tokens, open if has-delimiters
   result = []
-  while tokens.length and tokens.0 isnt close
-    result.push consume-element tokens
+  until-test = ",#{ if has-delimiters then close else '' }"
+  while tokens.length and (has-delimiters and tokens.0 isnt close)
+    result.push consume-element tokens, until-test
     maybe-consume-op tokens, ','
   consume-op tokens, close if has-delimiters
   result
@@ -27,20 +28,27 @@ function consume-tuple tokens, has-delimiters
 function consume-fields tokens, has-delimiters
   consume-op tokens, '{' if has-delimiters
   result = {}
+  until-test = ",#{ if has-delimiters then '}' else ''}"
   while tokens.length and (not has-delimiters or tokens.0 isnt '}')
-    key = tokens.shift!
+    key = consume-value tokens, ':'
     consume-op tokens, ':'
-    result[key] = consume-element tokens
+    result[key] = consume-element tokens, until-test
     maybe-consume-op tokens, ','
   consume-op tokens, '}' if has-delimiters
   result
 
-function consume-element tokens
+function consume-value tokens, until-test = ''
+  out = ''
+  while tokens.length and -1 is until-test.index-of tokens.0
+    out += tokens.shift!
+  out
+
+function consume-element tokens, until-test
   switch tokens.0
   | '[' => consume-array tokens, true
   | '(' => consume-tuple tokens, true
   | '{' => consume-fields tokens, true
-  |  _  => tokens.shift!
+  |  _  => consume-value tokens, until-test
 
 function consume-top-level tokens, types, options
   {type, structure} = types.0
@@ -66,10 +74,7 @@ function consume-top-level tokens, types, options
       result
   else
     final-result = consume-element tokens
-  if tokens.length and orig-tokens.length
-    throw new Error "Unable to parse #{ JSON.stringify orig-tokens } of type #{ JSON.stringify types}."
-  else
-    final-result
+  final-result
 
 special = /\[\]\(\)}{:,/.source
 token-regex = //
@@ -85,7 +90,7 @@ token-regex = //
 module.exports = (types, string, options = {}) ->
   if not options.explicit and types.length is 1 and types.0.type is 'String'
     return "'#{ string.replace /\\'/g "\\\\'" }'"
-  tokens = reject (-> not it or /^\s+$/.test it), string.split token-regex
+  tokens = reject (not), string.split token-regex
   node = consume-top-level tokens, types, options
   throw new Error "Error parsing '#string'." unless node
   node

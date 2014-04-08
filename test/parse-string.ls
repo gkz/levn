@@ -17,8 +17,8 @@ suite 'parse-string' ->
     q "string", 'String', '\'string\''
     q "'string'", '*', '\'string\''
     q 'string with spaces and: {[(})]', 'String', '\'string with spaces and: {[(})]\''
-    throws (-> q 'string with spaces and: {[(})]', '*'), /Unable to parse/
-    throws (-> q 'string with spaces and: {[(})]', 'String', , {+explicit}), /Unable to parse/
+    q 'string with spaces and: {[(})]', '*', 'string with spaces and:{[(})]'
+    q 'string with spaces and: {[(})]', 'String', 'string with spaces and:{[(})]', {+explicit}
 
   test '#date#' ->
     q '#2011-11-11#', 'Date', '#2011-11-11#'
@@ -38,6 +38,7 @@ suite 'parse-string' ->
     q '[1,2,3]', '[Number]', ['1','2','3']
     q '[1,2,3]', '*', ['1','2','3']
     q '[one two , three four]', '[String]', ['one two','three four']
+    q '[one:two, three:four]', '[String]', ['one:two','three:four']
 
     q '[1,2,3,]', '*', ['1','2','3']
     q '[1, 2, 3, ]', '*', ['1','2','3']
@@ -49,7 +50,6 @@ suite 'parse-string' ->
 
     q '1,2,3', '[Number]', ['1','2','3']
     q '1,2,3', 'Array', ['1','2','3']
-    throws (-> q '1,2,3', '*'), /Unable to parse/
 
     q '1, 2, 3', '[Number]', ['1','2','3']
     q '1, 2, 3', 'Array', ['1','2','3']
@@ -72,9 +72,6 @@ suite 'parse-string' ->
     q '1,2', '(Number, Number)', ['1', '2']
     q '1, 2', '(Number, Number)', ['1', '2']
 
-    throws (-> q '1,2', '*'), /Unable to parse/
-    throws (-> q '1,2', '*'), /Unable to parse/
-
     q '(1,2),(3,4)', '((Number,Number),(Number,Number))', [['1','2'],['3','4']]
 
   test '{object}' ->
@@ -82,27 +79,30 @@ suite 'parse-string' ->
     q '{x: 2, y: 3}', '{...}', {x: '2', y: '3'}
     q '{x: 2, y: 3}', 'RegExp{...}', {x: '2', y: '3'}
     q '{x: 2, y: 3}', '{x: Number, y: Number}', {x: '2', y: '3'}
-    q '{x: 2, y: 3}', '*', {x: '2', y: '3'}
+    q '{x: 2, y: 3}', '{x: Number, y: Number}', {x: '2', y: '3'}
+    q '{[x]: 2, y(): 3}', '*', {'[x]': '2', 'y()': '3'}
+    q '{x: 2():, y: 3][}', '*', {x: '2():', y: '3]['}
 
     q '', 'Object', {}
     q '', '{...}', {}
     q '', '{x: Number, y: Number}', {}
 
-    throws (-> q '{x}', '*'), /Expected ':', but got '}' instead/
+    throws (-> q '{x}', '*'), /Expected ':', but got 'undefined' instead/
 
     q 'x: 2, y: 3', 'Object', {x: '2', y: '3'}
     q 'x: 2, y: 3', '{x: Number, y: Number}', {x: '2', y: '3'}
-
-    throws (-> q 'x: 2, y: 3', '*'), /Unable to parse/
 
   test 'etc' ->
     q 'hi', '*', 'hi'
     q 'this is a string', '*', 'this is a string'
     q '&$-1234asdfasw#!.+=%', '*', '&$-1234asdfasw#!.+=%'
+    q 'x: 2, y: 3', '*', 'x:2,y:3'
+    q '1,2', '*', '1,2'
+    q '1,2,3', '*', '1,2,3'
 
   test 'explicit' ->
-    throws (-> q '1,2,3', '*', , {+explicit}), /Unable to parse/
-    throws (-> q '1,2,3', 'Array', , {+explicit}), /Unable to parse/
+    q '1,2,3', '*', '1,2,3', {+explicit}
+    q '1,2,3', 'Array', '1,2,3', {+explicit}
 
   test 'nothing' ->
     throws (-> q '', '*'), /Error parsing ''/

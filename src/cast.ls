@@ -76,7 +76,10 @@ function cast-tuple node, type, options
 function cast-fields node, type, options
   return {type: 'Nothing'} unless typeof! node is 'Object'
   type-of = type.of
-  type: 'Just', value: {[key, types-cast value, (type-of[key] or [{type: '*'}]), options] for key, value of node}
+
+  type: 'Just'
+  value:
+    {[(types-cast key, [{type: 'String'}], options), types-cast value, (type-of[key] or [{type: '*'}]), options] for key, value of node}
 
 function type-cast node, type-obj, options
   {type, structure} = type-obj

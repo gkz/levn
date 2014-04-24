@@ -78,6 +78,18 @@ suite 'cast' ->
     q 'Object', 'x: 2, y: hello', {x: 2, y: 'hello'}
     q 'Object', '{}', {}
 
+  test 'JSON is valid Object' ->
+    json = '''
+    {
+         "key": "object",
+         "empty": false,
+         "time_nano": 19608,
+         "validate": {"b": true},
+         "sizes": [1, 2, 3]
+    }
+    '''
+    q 'Object', json, {key: 'object', -empty, time_nano: 19608, validate: {+b}, sizes: [1,2,3]}
+
   test 'String' ->
     q 'String', '2', '2'
     q 'String', 'one two three', 'one two three'

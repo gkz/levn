@@ -24,12 +24,7 @@
   ],
   "main": "./lib/",
   "bugs": "https://github.com/gkz/levn/issues",
-  "licenses": [
-    {
-      "type": "MIT",
-      "url": "https://raw.github.com/gkz/levn/master/LICENSE"
-    }
-  ],
+  "license": "MIT",
   "engines": {
     "node": ">= 0.8.0"
   },

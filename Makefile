@@ -3,7 +3,7 @@ default: all
 SRC = $(shell find src -name "*.ls" -type f | sort)
 LIB = $(SRC:src/%.ls=lib/%.js)
 
-LS = node_modules/LiveScript
+LS = node_modules/livescript
 LSC = node_modules/.bin/lsc
 MOCHA = node_modules/.bin/mocha
 MOCHA2 = node_modules/.bin/_mocha
@@ -13,7 +13,7 @@ package.json: package.json.ls
 	$(LSC) --compile package.json.ls
 
 lib:
-	mkdir lib/
+	mkdir -p lib/
 
 lib/%.js: src/%.ls lib
 	$(LSC) --compile --output lib "$<"

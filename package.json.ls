@@ -33,10 +33,10 @@ scripts:
   test: "make test"
 
 dependencies:
-  'prelude-ls': '~1.1.0'
+  'prelude-ls': '~1.1.2'
   'type-check': '~0.3.1'
 
 dev-dependencies:
-  LiveScript: '~1.2.0'
-  mocha: '~1.8.2'
-  istanbul: '~0.1.43'
+  livescript: '~1.4.0'
+  mocha: '~2.3.4'
+  istanbul: '~0.4.1'

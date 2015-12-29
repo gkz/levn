@@ -34,7 +34,7 @@ scripts:
 
 dependencies:
   'prelude-ls': '~1.1.2'
-  'type-check': '~0.3.1'
+  'type-check': '~0.3.2'
 
 dev-dependencies:
   livescript: '~1.4.0'

@@ -28,8 +28,8 @@ types =
     else
       type: 'Nothing'
   Number: -> type: 'Just', value: +it
-  Int: -> type: 'Just', value: parse-int it
-  Float: -> type: 'Just', value: parse-float it
+  Int: -> type: 'Just', value: +it
+  Float: -> type: 'Just', value: +it
   Date: (value, options) ->
     if /^\#([\s\S]*)\#$/.exec value
       type: 'Just', value: new Date (+that.1 or that.1)

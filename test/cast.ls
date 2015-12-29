@@ -42,8 +42,7 @@ suite 'cast' ->
   test 'Int' ->
     q 'Int', '2', 2
     q 'Int', '-2', -2
-    q 'Int', '2.1', 2
-    q 'Int', '-2.1', -2
+    throws (-> q 'Int', '2.1'), /Value "2.1" does not type check against/
     throws (-> q 'Int', 'NaN'), /Value "NaN" does not type check against/
 
   test 'Float' ->

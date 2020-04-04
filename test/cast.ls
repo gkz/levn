@@ -78,6 +78,7 @@ suite 'cast' ->
     q 'Object', '{}', {}
     q 'Object', 'max-len: ["error", 80, { ignorePattern: "require\\\\(" }]', {"max-len": ["error", 80, {ignorePattern: "require\\("}]}
     q 'Object', 'foo: "\\r\\n"', {"foo": '\r\n'}
+    q 'Object', "foo: '\\r\\n'", {"foo": '\r\n'}
     q 'Object', 'foo: "\r\n"', {"foo": '\r\n'}
     q 'Object', 'foo: "\\u00f8"', {"foo": '\u00f8'}
 
@@ -105,6 +106,7 @@ suite 'cast' ->
     q 'String', "'one[two]three'", "'one[two]three'"
     q 'String', '"before"after"', '"before"after"'
     q 'String', '"hi"', '"hi"'
+    q 'String', "'hi'", "'hi'"
     q 'String', '"h\n\ni"', '"h\n\ni"'
 
   test 'multiple' ->

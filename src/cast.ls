@@ -61,7 +61,7 @@ types =
         | 'u' => JSON.parse "\"#all\""
         | _ => escaped
     if it.match /^'([\s\S]*)'$/
-      type: 'Just', value: repalce that.1, "'"
+      type: 'Just', value: replace that.1, "'"
     else if it.match /^"([\s\S]*)"$/
       type: 'Just', value: replace that.1, '"'
     else

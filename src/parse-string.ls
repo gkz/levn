@@ -89,7 +89,7 @@ token-regex = //
 
 module.exports = (types, string, options = {}) ->
   if not options.explicit and types.length is 1 and types.0.type is 'String'
-    return "'#{ string.replace /\\'/g "\\\\'" }'"
+    return string
   tokens = reject (not), string.split token-regex
   node = consume-top-level tokens, types, options
   throw new Error "Error parsing '#string'." unless node

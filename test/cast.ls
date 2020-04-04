@@ -76,6 +76,10 @@ suite 'cast' ->
     q 'Object', '{x: 2, y: hello}', {x: 2, y: 'hello'}
     q 'Object', 'x: 2, y: hello', {x: 2, y: 'hello'}
     q 'Object', '{}', {}
+    q 'Object', 'max-len: ["error", 80, { ignorePattern: "require\\\\(" }]', {"max-len": ["error", 80, {ignorePattern: "require\\("}]}
+    q 'Object', 'foo: "\\r\\n"', {"foo": '\r\n'}
+    q 'Object', 'foo: "\r\n"', {"foo": '\r\n'}
+    q 'Object', 'foo: "\\u00f8"', {"foo": '\u00f8'}
 
   test 'JSON is valid Object' ->
     json = '''
@@ -98,7 +102,7 @@ suite 'cast' ->
     q 'String', '{2: [], ()}', '{2: [], ()}'
 
   test 'String using quotes' ->
-    q 'String', "'one[two]three'", '\'one[two]three\''
+    q 'String', "'one[two]three'", "'one[two]three'"
     q 'String', '"before"after"', '"before"after"'
     q 'String', '"hi"', '"hi"'
     q 'String', '"h\n\ni"', '"h\n\ni"'
@@ -218,9 +222,6 @@ suite 'cast' ->
     test 'string' ->
       q '*', 'hi', 'hi'
       q '*', '2011-11-11', '2011-11-11'
-      q '*', '"\'"', "'"
-      q '*', '"\\""', '"'
-      q '*', '"\\"\\""', '""'
 
     test 'quoted string' ->
       q '*', '"hello there"', 'hello there'
@@ -229,6 +230,9 @@ suite 'cast' ->
       q '*', '"true"', 'true'
       q '*', '"false"', 'false'
       q '*', '"2"', '2'
+      q '*', '"\'"', "'"
+      q '*', '"\\""', '"'
+      q '*', '"\\"\\""', '""'
 
     test 'date' ->
       q '*', '#2011-11-11#', new Date '2011-11-11'

@@ -48,10 +48,22 @@ types =
   Object: (value, options) -> cast-fields value, {of: {}}, options
   String: ->
     return type: 'Nothing' unless typeof! it is 'String'
+    replace = (value, quote) ->
+      value.replace /\\([^u]|u[0-9a-fA-F]{4})/g, (all, escaped) ->
+        switch escaped.0
+        | quote => quote
+        | '\\' => '\\'
+        | 'b' => '\b'
+        | 'f' => '\f'
+        | 'n' => '\n'
+        | 'r' => '\r'
+        | 't' => '\t'
+        | 'u' => JSON.parse "\"#all\""
+        | _ => escaped
     if it.match /^'([\s\S]*)'$/
-      type: 'Just', value: that.1.replace /\\'/g, "'"
+      type: 'Just', value: repalce that.1, "'"
     else if it.match /^"([\s\S]*)"$/
-      type: 'Just', value: that.1.replace /\\"/g, '"'
+      type: 'Just', value: replace that.1, '"'
     else
       type: 'Just', value: it
 
@@ -100,4 +112,7 @@ function types-cast node, types, options
     return value if parsed-type-check [type], value, {custom-types: options.custom-types}
   throw new Error "Value #{ JSON.stringify node} does not type check against #{ JSON.stringify types }."
 
-module.exports = types-cast
+module.exports = (node, types, options) ->
+  if not options.explicit and types.length is 1 and types.0.type is 'String'
+    return node
+  types-cast node, types, options

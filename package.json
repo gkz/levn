@@ -1,6 +1,6 @@
 {
   "name": "levn",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "author": "George Zahariev <z@georgezahariev.com>",
   "description": "Light ECMAScript (JavaScript) Value Notation - human written, concise, typed, flexible",
   "homepage": "https://github.com/gkz/levn",
